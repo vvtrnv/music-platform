@@ -1,0 +1,22 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "back-debug",
+      "skipFiles": [
+        "<node_internals>/**"
+      ],
+      "outputCapture": "std",
+      "runtimeExecutable": "npx",
+      "envFile": "${workspaceFolder}/apps/server/config/.env",
+      "cwd": "${workspaceFolder}/apps/server",
+      "args": [
+        "nx",
+        "serve",
+        "server"
+      ]
+    }
+  ]
+}
