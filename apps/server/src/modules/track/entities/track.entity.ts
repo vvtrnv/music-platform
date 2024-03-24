@@ -1,8 +1,9 @@
+import { DataTypes } from 'sequelize';
 import { Column, Model, Table } from 'sequelize-typescript';
 
 @Table
 export class Track extends Model {
-  @Column
+  @Column({ type: DataTypes.UUID, primaryKey: true })
   id?: string;
   @Column
   name?: string;

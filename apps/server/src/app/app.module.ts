@@ -9,8 +9,8 @@ import { TrackModule } from '../modules/track';
     SequelizeModule.forRoot({
       ...databaseOptions,
       dialect: 'postgres',
-      autoLoadModels: false,
-      synchronize: false,
+      autoLoadModels: true,
+      synchronize: true,
     }),
   ],
   controllers: [],
