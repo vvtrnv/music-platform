@@ -1,10 +1,17 @@
 import { Module } from '@nestjs/common';
-
-import { TrackModule } from '../modules/track/track.module';
+import { SequelizeModule } from '@nestjs/sequelize';
+import { databaseOptions } from '../database';
+import { TrackModule } from '../modules/track';
 
 @Module({
   imports: [
     TrackModule,
+    SequelizeModule.forRoot({
+      ...databaseOptions,
+      dialect: 'postgres',
+      autoLoadModels: false,
+      synchronize: false,
+    }),
   ],
   controllers: [],
   providers: [],

@@ -12,10 +12,10 @@
       "runtimeExecutable": "npx",
       "envFile": "${workspaceFolder}/apps/server/config/.env",
       "cwd": "${workspaceFolder}/apps/server",
-      "args": [
+      "args": [ 
         "nx",
-        "serve",
-        "server"
+        "run",
+        "server:serve",
       ]
     }
   ]
