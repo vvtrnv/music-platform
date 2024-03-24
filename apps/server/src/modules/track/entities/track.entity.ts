@@ -10,7 +10,7 @@ export class Track extends Model {
   @Column
   artist?: string;
   @Column
-  litens?: number;
+  listens?: number;
   @Column
   picture?: string;
   @Column
