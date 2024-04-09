@@ -7,5 +7,5 @@ export interface IBaseService<Entity = any> {
   findAll(dto?: BaseSearchDto): Promise<Entity[]>;
   findById(id: UUID): Promise<Entity> | Promise<null>;
   create(dto: BaseCreateDto): Promise<Entity>;
-  update(id: string, dto: BaseUpdateDto): Promise<void>;
+  update(id: string, dto: BaseUpdateDto): Promise<[affectedCount: number]>;
 }
