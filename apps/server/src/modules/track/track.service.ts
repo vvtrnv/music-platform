@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { IBaseService } from '@backend/common';
 import { Track } from './entities/track.entity';
 import { InjectModel } from '@nestjs/sequelize';
@@ -7,6 +7,7 @@ import { TrackCreateDto } from './dto/track.create.dto';
 import { TrackUpdateDto } from './dto/track.update.dto';
 @Injectable()
 export class TrackService implements IBaseService<Track> {
+  private readonly logger = new Logger(TrackService.name);
   constructor(
     @InjectModel(Track)
     protected trackModel: typeof Track,
