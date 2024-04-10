@@ -8,12 +8,12 @@ import * as uuid from 'uuid';
 export class FilesService {
   private readonly logger = new Logger(FilesService.name);
 
-  public save(file: any, fileType?: FileTypes) {
+  public save(file: any, fileType: FileTypes) {
     try {
       console.log(file);
-      const fileType = file.originalname.split('.').pop();
-      const filepath = path.resolve(__dirname, 'test/uploaded');
-      const filename = `${uuid.v4()}.${fileType}`;
+      const fileExtension = file.originalname.split('.').pop();
+      const filepath = path.resolve(__dirname, '../../..','files', fileType);
+      const filename = `${uuid.v4()}.${fileExtension}`;
 
       if (!fs.existsSync(filepath)) {
         this.logger.log(`Создан каталог '${filepath}'`);
