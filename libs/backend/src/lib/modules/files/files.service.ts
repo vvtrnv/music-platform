@@ -9,9 +9,10 @@ export class FilesService {
 
   public save(file: any, fileType?: FileTypes) {
     try {
-      const fileType = (file.originalname as string).split('.').pop();
+      console.log(file);
+      const fileType = file.originalname.split('.').pop();
       const filepath = path.resolve(__dirname, 'test/uploaded');
-      const filename = `${crypto.randomUUID()}.${fileType}`;
+      const filename = `${self.crypto.randomUUID()}.${fileType}`;
 
       if (!fs.existsSync(filepath)) {
         this.logger.log(`Создан каталог '${filepath}'`);

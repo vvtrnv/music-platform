@@ -40,8 +40,8 @@ export class TrackController {
     @Body() dto: TrackCreateDto,
   ) {
     const { audio, picture } = files;
-    this.filesService.save(audio);
-    this.filesService.save(picture);
+    this.filesService.save(audio[0]);
+    this.filesService.save(picture[0]);
     return this.trackService.create(dto);
   }
 
