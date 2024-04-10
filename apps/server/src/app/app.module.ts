@@ -11,6 +11,7 @@ import { TrackModule } from '../modules/track';
       dialect: 'postgres',
       autoLoadModels: true,
       synchronize: true,
+      sync: { force: true },
     }),
   ],
   controllers: [],

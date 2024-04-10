@@ -3,6 +3,7 @@ import { TrackService } from './track.service';
 import { TrackController } from './track.controller';
 import { SequelizeModule } from '@nestjs/sequelize';
 import { Track } from './entities/track.entity';
+import { FilesModule } from '@backend/common';
 
 
 @Module({
@@ -10,6 +11,7 @@ import { Track } from './entities/track.entity';
     SequelizeModule.forFeature([
       Track,
     ]),
+    FilesModule,
   ],
   providers: [
     TrackService,

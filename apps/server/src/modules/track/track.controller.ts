@@ -7,11 +7,13 @@ import { TrackUpdateDto } from './dto/track.update.dto';
 import { UseInterceptors } from '@nestjs/common';
 import { FileFieldsInterceptor } from '@nestjs/platform-express';
 import { UploadedFiles } from '@nestjs/common';
+import { FilesService } from '@backend/common';
 
 @Controller('track')
 export class TrackController {
   constructor(
     protected trackService: TrackService,
+    protected filesService: FilesService,
   ) {}
 
   @Get()
@@ -37,7 +39,9 @@ export class TrackController {
     @UploadedFiles() files,
     @Body() dto: TrackCreateDto,
   ) {
-    console.log(files);
+    const { audio, picture } = files;
+    this.filesService.save(audio);
+    this.filesService.save(picture);
     return this.trackService.create(dto);
   }
 
