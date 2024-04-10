@@ -2,6 +2,7 @@ import { HttpException, HttpStatus, Injectable, Logger } from '@nestjs/common';
 import * as path from 'path';
 import * as fs from 'fs';
 import { FileTypes } from './interfaces';
+import * as uuid from 'uuid';
 
 @Injectable()
 export class FilesService {
@@ -12,7 +13,7 @@ export class FilesService {
       console.log(file);
       const fileType = file.originalname.split('.').pop();
       const filepath = path.resolve(__dirname, 'test/uploaded');
-      const filename = `${self.crypto.randomUUID()}.${fileType}`;
+      const filename = `${uuid.v4()}.${fileType}`;
 
       if (!fs.existsSync(filepath)) {
         this.logger.log(`Создан каталог '${filepath}'`);
