@@ -4,6 +4,9 @@ import { TrackSearchDto } from './dto/track.search.dto';
 import { ApiOperation, ApiParam } from '@nestjs/swagger';
 import { TrackCreateDto } from './dto/track.create.dto';
 import { TrackUpdateDto } from './dto/track.update.dto';
+import { UseInterceptors } from '@nestjs/common';
+import { FileFieldsInterceptor } from '@nestjs/platform-express';
+import { UploadedFiles } from '@nestjs/common';
 
 @Controller('track')
 export class TrackController {
@@ -26,7 +29,15 @@ export class TrackController {
 
   @Post()
   @ApiOperation({})
-  public create(@Body() dto: TrackCreateDto) {
+  @UseInterceptors(FileFieldsInterceptor([
+    { name: 'audio', maxCount: 1 },
+    { name: 'picture', maxCount: 1 },
+  ]))
+  public create(
+    @UploadedFiles() files,
+    @Body() dto: TrackCreateDto,
+  ) {
+    console.log(files);
     return this.trackService.create(dto);
   }
 
