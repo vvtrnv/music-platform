@@ -1,7 +1,7 @@
 import { Column, DataType, Default, Model, PrimaryKey, Table } from 'sequelize-typescript';
 
-@Table
-export class Track extends Model {
+@Table({ tableName: 'Tracks'})
+export class TrackEntity extends Model {
   @PrimaryKey
   @Default(DataType.UUIDV4)
   @Column(DataType.UUID)

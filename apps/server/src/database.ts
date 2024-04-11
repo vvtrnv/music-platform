@@ -1,4 +1,4 @@
-import { Track } from './modules/track';
+import { TrackEntity } from './modules/track';
 
 export const databaseOptions = {
   host: process.env.POSTGRES_HOST,
@@ -7,6 +7,6 @@ export const databaseOptions = {
   password: process.env.POSTGRES_PASSWORD,
   database: process.env.POSTGRES_DBNAME,
   models: [
-    Track,
+    TrackEntity,
   ],
 };

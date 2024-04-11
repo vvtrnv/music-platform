@@ -1,9 +1,9 @@
 import { BaseSearchDto } from '@backend/common';
-import { Track } from '../entities/track.entity';
+import { TrackEntity } from '../entities/track.entity';
 import { ApiPropertyOptional } from '@nestjs/swagger';
 import { IsNumber, IsOptional, IsString } from 'class-validator';
 
-export class TrackSearchDto extends BaseSearchDto<Track> {
+export class TrackSearchDto extends BaseSearchDto<TrackEntity> {
   @ApiPropertyOptional()
   @IsString()
   @IsOptional()

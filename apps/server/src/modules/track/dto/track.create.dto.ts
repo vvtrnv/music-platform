@@ -1,9 +1,9 @@
 import { BaseCreateDto } from '@backend/common';
-import { Track } from '../entities/track.entity';
+import { TrackEntity } from '../entities/track.entity';
 import { ApiProperty } from '@nestjs/swagger';
 import { IsString } from 'class-validator';
 
-export class TrackCreateDto extends BaseCreateDto<Track> {
+export class TrackCreateDto extends BaseCreateDto<TrackEntity> {
   @ApiProperty()
   @IsString()
   name: string;
