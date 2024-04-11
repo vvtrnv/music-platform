@@ -12,7 +12,8 @@ export class FilesService {
     try {
       console.log(file);
       const fileExtension = file.originalname.split('.').pop();
-      const filepath = path.resolve(__dirname, '../../..','files', fileType);
+      const filepath = path.resolve(
+        process.env['FILES_DIR'] ?? `${__dirname}/../../../files`, fileType);
       const filename = `${uuid.v4()}.${fileExtension}`;
 
       if (!fs.existsSync(filepath)) {
