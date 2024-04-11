@@ -52,8 +52,8 @@ export class FilesService {
       let deletedFilesCounter = 0;
 
       this.logger.log(`remove. Найдено ${fileRecords.length} записей по запросу ${whereOpt}`)
-      fileRecords.forEach(async file => await fs.unlink(path.resolve(file.path, file.filename), err => {
-        if (err && err.code == "ENOENT") {
+      fileRecords.forEach(async file => await fs.unlink(path.resolve(file?.path ?? '', file?.filename ?? ''), err => {
+        if (err && err.code == 'ENOENT') {
           this.logger.error(`Файл ${file.path}/${file.filename} не найден`);
         } else if (err) {
           this.logger.error(`При удалении файла ${file.path}/${file.filename} ошибка ${err.message}`);
