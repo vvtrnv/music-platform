@@ -1,19 +1,17 @@
-import { Column, DataType, Default, Model, PrimaryKey, Table } from 'sequelize-typescript';
+import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 
-@Table({ tableName: 'Tracks'})
-export class TrackEntity extends Model {
-  @PrimaryKey
-  @Default(DataType.UUIDV4)
-  @Column(DataType.UUID)
-  id?: string;
-  @Column
-  name?: string;
-  @Column
-  artist?: string;
-  @Column({ defaultValue: 0 })
-  listens?: number;
-  @Column
-  picture?: string;
-  @Column
-  audio?: string;
+@Entity({ name: 'Tracks' })
+export class TrackEntity {
+  @PrimaryGeneratedColumn('uuid')
+  id: string;
+  @Column()
+  name: string;
+  @Column()
+  artist: string;
+  @Column({ default: 0 })
+  listens: number;
+  @Column()
+  imageId: string;
+  @Column()
+  audioId: string;
 }

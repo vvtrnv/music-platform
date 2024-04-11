@@ -1,16 +1,21 @@
 import { Module } from '@nestjs/common';
-import { SequelizeModule } from '@nestjs/sequelize';
 import { databaseOptions } from '../database';
-import { TrackModule } from '../modules/track';
+import { TrackEntity, TrackModule } from '../modules/track';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { FileEntity } from '@backend/common';
 
 @Module({
   imports: [
     TrackModule,
-    SequelizeModule.forRoot({
+    TypeOrmModule.forRoot({
       ...databaseOptions,
-      dialect: 'postgres',
+      type: 'postgres',
       synchronize: true,
-      sync: { force: true },
+      entities: [
+        TrackEntity,
+        FileEntity,
+      ],
+      logging: true,
     }),
   ],
   controllers: [],

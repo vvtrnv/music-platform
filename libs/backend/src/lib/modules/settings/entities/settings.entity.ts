@@ -1,16 +1,15 @@
-import { DataTypes, Model } from 'sequelize';
-import { Column, Table } from 'sequelize-typescript';
+import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 
-@Table
-export class Settings extends Model {
-  @Column({ type: DataTypes.UUID, primaryKey: true })
-  id?: string;
-  @Column
-  name?: string;
-  @Column
-  value?: string;
-  @Column
-  sysname?: string;
-  @Column
+@Entity({ name: 'Settings' })
+export class SettingsEntity {
+  @PrimaryGeneratedColumn('uuid')
+  id: string;
+  @Column()
+  name: string;
+  @Column()
+  value: string;
+  @Column()
+  sysname: string;
+  @Column({ nullable: true })
   description?: string;
 }

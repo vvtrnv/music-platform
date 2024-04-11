@@ -1,14 +1,14 @@
 import { Module } from '@nestjs/common';
 import { SettingsService } from './settings.service';
 import { SettingsController } from './settings.controller';
-import { SequelizeModule } from '@nestjs/sequelize';
-import { Settings } from './entities/settings.entity';
+import { SettingsEntity } from './entities/settings.entity';
+import { TypeOrmModule } from '@nestjs/typeorm';
 
 @Module({
   providers: [SettingsService],
   controllers: [SettingsController],
   imports: [
-    SequelizeModule.forFeature([Settings]),
+    TypeOrmModule.forFeature([SettingsEntity]),
   ],
 })
 export class SettingsModule {}

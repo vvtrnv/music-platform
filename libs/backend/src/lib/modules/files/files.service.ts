@@ -3,15 +3,16 @@ import * as path from 'path';
 import * as fs from 'fs';
 import { FileTypes, IFile } from './interfaces';
 import * as uuid from 'uuid';
-import { InjectModel } from '@nestjs/sequelize';
 import { FileEntity } from './entities/file.entity';
+import { InjectRepository } from '@nestjs/typeorm';
+import { DeleteResult, Repository } from 'typeorm';
 
 @Injectable()
 export class FilesService {
   private readonly logger = new Logger(FilesService.name);
   constructor(
-    @InjectModel(FileEntity)
-    protected fileModel: typeof FileEntity,
+    @InjectRepository(FileEntity)
+    private filesRepo: Repository<FileEntity>,
   ) {}
 
   /**
@@ -35,7 +36,7 @@ export class FilesService {
       this.logger.log(`Сохранение файла ${filename}`);
       fs.writeFileSync(path.resolve(filepath, filename), file.buffer);
 
-      return (await this.createRecord(FileEntity.build({ filename, path: filepath })))?.id;
+      return (await this.createRecord({ filename, path: filepath })).id;
     } catch (error: any) {
       throw new HttpException(error.message, HttpStatus.INTERNAL_SERVER_ERROR)
     }
@@ -46,7 +47,7 @@ export class FilesService {
    * @param whereOpt 
    * @returns количество задетых записей
    */
-  protected async remove(whereOpt: IFile): Promise<number> {
+  protected async remove(whereOpt: IFile): Promise<DeleteResult> {
     try {
       const fileRecords = await this.getFileRecords(whereOpt);
       let deletedFilesCounter = 0;
@@ -76,15 +77,15 @@ export class FilesService {
    * @returns FileEntity
    */
   protected async createRecord(file: IFile): Promise<FileEntity> {
-    return this.fileModel.create({ ...file });
+    return this.filesRepo.save({ ...file });
   }
   /**
    * Удаление записи о файле/файлах
    * @param file поля для поиска
    * @returns количество затронутых записей
    */
-  protected async removeRecords(file: IFile): Promise<number> {
-    return this.fileModel.destroy({ where: { ...file } });
+  protected async removeRecords(file: IFile): Promise<DeleteResult> {
+    return this.filesRepo.delete({ ...file });
   }
   /**
    * Получение записей из таблицы Files
@@ -92,6 +93,6 @@ export class FilesService {
    * @returns Массив
    */
   protected async getFileRecords(file: IFile): Promise<FileEntity[]>{
-    return this.fileModel.findAll({ where: { ...file } })
+    return this.filesRepo.find({ where: { ...file } })
   }
 }

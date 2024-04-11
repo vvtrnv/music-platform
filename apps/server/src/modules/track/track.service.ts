@@ -1,29 +1,30 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { IBaseService } from '@backend/common';
 import { TrackEntity } from './entities/track.entity';
-import { InjectModel } from '@nestjs/sequelize';
 import { TrackSearchDto } from './dto/track.search.dto';
 import { TrackCreateDto } from './dto/track.create.dto';
 import { TrackUpdateDto } from './dto/track.update.dto';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository, UpdateResult } from 'typeorm';
 @Injectable()
 export class TrackService implements IBaseService<TrackEntity> {
   private readonly logger = new Logger(TrackService.name);
   constructor(
-    @InjectModel(TrackEntity)
-    protected trackModel: typeof TrackEntity,
+    @InjectRepository(TrackEntity)
+    private filesRepo: Repository<TrackEntity>,
   ) {}
 
-  public findAll(dto?: TrackSearchDto): Promise<TrackEntity[]> {
-    return this.trackModel.findAll({ where: { ...dto } });
+  public async findAll(dto?: TrackSearchDto): Promise<TrackEntity[]> {
+    return this.filesRepo.find({ where: { ...dto } });
   }
-  public findById(id: string): Promise<TrackEntity> | Promise<null> {
-    return this.trackModel.findOne({ where: { id } });
+  public async findById(id: string): Promise<TrackEntity> {
+    return this.filesRepo.findOne({ where: { id } });
   }
-  public create(dto: TrackCreateDto): Promise<TrackEntity> {
-    return this.trackModel.create({ ...dto });
+  public async create(dto: TrackCreateDto): Promise<TrackEntity> {
+    return this.filesRepo.save({ ...dto });
   }
-  public update(id: string, dto: TrackUpdateDto): Promise<[affectedCount: number]> {
-    return this.trackModel.update({ ...dto }, { where: { id } });
+  public async update(id: string, dto: TrackUpdateDto): Promise<UpdateResult> {
+    return this.filesRepo.update({ id }, { ...dto });
   }
   
 }

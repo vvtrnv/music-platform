@@ -1,14 +1,14 @@
 import { Module } from '@nestjs/common';
 import { TrackService } from './track.service';
 import { TrackController } from './track.controller';
-import { SequelizeModule } from '@nestjs/sequelize';
 import { TrackEntity } from './entities/track.entity';
 import { FilesModule } from '@backend/common';
+import { TypeOrmModule } from '@nestjs/typeorm';
 
 
 @Module({
   imports: [
-    SequelizeModule.forFeature([
+    TypeOrmModule.forFeature([
       TrackEntity,
     ]),
     FilesModule,
