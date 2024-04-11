@@ -1,11 +1,24 @@
 import { Module } from '@nestjs/common';
-
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
+import { databaseOptions } from '../database';
+import { TrackEntity, TrackModule } from '../modules/track';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { FileEntity } from '@backend/common';
 
 @Module({
-  imports: [],
-  controllers: [AppController],
-  providers: [AppService],
+  imports: [
+    TrackModule,
+    TypeOrmModule.forRoot({
+      ...databaseOptions,
+      type: 'postgres',
+      synchronize: true,
+      entities: [
+        TrackEntity,
+        FileEntity,
+      ],
+      logging: true,
+    }),
+  ],
+  controllers: [],
+  providers: [],
 })
 export class AppModule {}

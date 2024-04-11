@@ -40,5 +40,5 @@ Thumbs.db
 
 .nx/cache
 
-files
 test
+apps/server/files
