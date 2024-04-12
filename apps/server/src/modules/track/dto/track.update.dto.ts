@@ -1,9 +1,9 @@
-import { BaseUpdateDto } from '@backend/common';
-import { TrackEntity } from '../entities/track.entity';
 import { ApiPropertyOptional } from '@nestjs/swagger';
 import { IsNumber, IsOptional, IsString } from 'class-validator';
+import { PartialType } from '@nestjs/mapped-types';
+import { TrackCreateDto } from './track.create.dto';
 
-export class TrackUpdateDto extends BaseUpdateDto<TrackEntity> {
+export class TrackUpdateDto extends PartialType(TrackCreateDto) {
   @ApiPropertyOptional()
   @IsString()
   @IsOptional()

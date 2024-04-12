@@ -1,11 +1,5 @@
-import { BaseUpdateDto } from '@backend/common';
-import { ApiPropertyOptional } from '@nestjs/swagger';
-import { IsOptional, IsString } from 'class-validator';
-import { ArtistEntity } from '../entities/artist.entity';
 
-export class ArtistUpdateDto extends BaseUpdateDto<ArtistEntity> {
-  @ApiPropertyOptional()
-  @IsString()
-  @IsOptional()
-  name?: string;
-}
+import { PartialType } from '@nestjs/mapped-types';
+import { ArtistCreateDto } from './artist.create.dto';
+
+export class ArtistUpdateDto extends PartialType(ArtistCreateDto) {}

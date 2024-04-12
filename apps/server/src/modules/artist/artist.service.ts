@@ -1,4 +1,4 @@
-import { BaseCreateDto, BaseSearchDto, BaseUpdateDto, IBaseService } from '@backend/common';
+import { IBaseService } from '@backend/common';
 import { Injectable } from '@nestjs/common';
 import { ArtistEntity } from './entities/artist.entity';
 import { Repository, UpdateResult } from 'typeorm';
