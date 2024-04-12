@@ -7,9 +7,9 @@ export class SettingsEntity {
   @Column()
   name: string;
   @Column()
-  value: string;
-  @Column()
   sysname: string;
+  @Column()
+  value: string;
   @Column({ nullable: true })
   description?: string;
 }

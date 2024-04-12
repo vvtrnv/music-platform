@@ -2,7 +2,7 @@ import { Module } from '@nestjs/common';
 import { databaseOptions } from '../database';
 import { TrackEntity, TrackModule } from '../modules/track';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { FileEntity } from '@backend/common';
+import { FileEntity, SettingsEntity } from '@backend/common';
 
 @Module({
   imports: [
@@ -14,6 +14,7 @@ import { FileEntity } from '@backend/common';
       entities: [
         TrackEntity,
         FileEntity,
+        SettingsEntity,
       ],
       logging: true,
     }),
