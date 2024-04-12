@@ -9,7 +9,7 @@ import { FileFieldsInterceptor } from '@nestjs/platform-express';
 import { UploadedFiles } from '@nestjs/common';
 import { FileTypes, FilesService } from '@backend/common';
 
-@Controller('track')
+@Controller('tracks')
 export class TrackController {
   constructor(
     protected trackService: TrackService,

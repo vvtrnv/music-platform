@@ -2,11 +2,14 @@ import { Module } from '@nestjs/common';
 import { databaseOptions } from '../database';
 import { TrackEntity, TrackModule } from '../modules/track';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { FileEntity } from '@backend/common';
+import { FileEntity, SettingsEntity, SettingsModule } from '@backend/common';
+import { ArtistEntity, ArtistModule } from '../modules/artist';
 
 @Module({
   imports: [
     TrackModule,
+    ArtistModule,
+    SettingsModule,
     TypeOrmModule.forRoot({
       ...databaseOptions,
       type: 'postgres',
@@ -14,6 +17,8 @@ import { FileEntity } from '@backend/common';
       entities: [
         TrackEntity,
         FileEntity,
+        SettingsEntity,
+        ArtistEntity,
       ],
       logging: true,
     }),
