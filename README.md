@@ -1,7 +1,7 @@
 # MusicPlatformApp
 
 ## todo
-- Подключить Swagger и вести документацию
+- Подключить Amazon S3 (Simple Storage Service) для работы с файлами
 - Попробовать библиотеку которая генерирует доку на основе jsdoc
 - ...
 
