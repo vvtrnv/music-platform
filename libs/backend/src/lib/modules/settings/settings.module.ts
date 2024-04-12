@@ -10,5 +10,6 @@ import { TypeOrmModule } from '@nestjs/typeorm';
   imports: [
     TypeOrmModule.forFeature([SettingsEntity]),
   ],
+  exports: [SettingsService],
 })
 export class SettingsModule {}
