@@ -3,10 +3,12 @@ import { databaseOptions } from '../database';
 import { TrackEntity, TrackModule } from '../modules/track';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { FileEntity, SettingsEntity } from '@backend/common';
+import { ArtistEntity, ArtistModule } from '../modules/artist';
 
 @Module({
   imports: [
     TrackModule,
+    ArtistModule,
     TypeOrmModule.forRoot({
       ...databaseOptions,
       type: 'postgres',
@@ -15,6 +17,7 @@ import { FileEntity, SettingsEntity } from '@backend/common';
         TrackEntity,
         FileEntity,
         SettingsEntity,
+        ArtistEntity,
       ],
       logging: true,
     }),
