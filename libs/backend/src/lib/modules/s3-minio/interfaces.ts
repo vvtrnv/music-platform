@@ -7,8 +7,8 @@ export interface IS3MinioConfig {
 }
 
 export interface UploadParams {
-  Bucket: string;
-  Key: string;
+  bucket: string;
+  key: string;
   /** File buffer */
-  Body: any;
+  body: any;
 }

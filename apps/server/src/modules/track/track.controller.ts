@@ -35,13 +35,13 @@ export class TrackController {
     { name: 'audio', maxCount: 1 },
     { name: 'picture', maxCount: 1 },
   ]))
-  public create(
+  public async create(
     @UploadedFiles() files,
     @Body() dto: TrackCreateDto,
   ) {
     const { audio, picture } = files;
-    this.filesService.save(audio[0], FileTypes.Audio);
-    this.filesService.save(picture[0], FileTypes.Image);
+    await this.filesService.save(audio[0], FileTypes.Audio);
+    await this.filesService.save(picture[0], FileTypes.Image);
     return this.trackService.create(dto);
   }
 

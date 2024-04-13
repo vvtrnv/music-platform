@@ -6,6 +6,7 @@ import * as uuid from 'uuid';
 import { FileEntity } from './entities/file.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { DeleteResult, Repository } from 'typeorm';
+import { S3MinioService } from '../s3-minio';
 
 @Injectable()
 export class FilesService {
@@ -13,37 +14,30 @@ export class FilesService {
   constructor(
     @InjectRepository(FileEntity)
     private filesRepo: Repository<FileEntity>,
+    private s3minioService: S3MinioService,
   ) {}
 
   /**
-   * Сохраняем файл на диск
+   * Сохраняем файл
    * @param file 
    * @param fileType 
    * @returns 
    */
   public async save(file: any, fileType: FileTypes): Promise<string | undefined> {
-    try {
-      console.log(file);
-      const fileExtension = file.originalname.split('.').pop();
-      const filepath = path.resolve(
-        process.env['FILES_DIR'] ?? `${__dirname}/../../../files`, fileType);
-      const filename = `${uuid.v4()}.${fileExtension}`;
+    const fileId = uuid.v4();
+    const fileExtension = file.originalname.split('.').pop();
+    const filename = `${fileId}.${fileExtension}`;
 
-      if (!fs.existsSync(filepath)) {
-        this.logger.log(`Создан каталог '${filepath}'`);
-        fs.mkdirSync(filepath, { recursive: true });
-      }
-      this.logger.log(`Сохранение файла ${filename}`);
-      fs.writeFileSync(path.resolve(filepath, filename), file.buffer);
-
-      return (await this.createRecord({ filename, path: filepath })).id;
-    } catch (error: any) {
-      throw new HttpException(error.message, HttpStatus.INTERNAL_SERVER_ERROR)
-    }
+    await this.s3minioService.upload({
+      key: fileId,
+      bucket: fileType,
+      body: file.buffer,
+    });
+    return (await this.createRecord({ filename, path: '' })).id;
   }
 
   /**
-   * Удаление файла/файлов с диска
+   * Удаление файла/файлов
    * @param whereOpt 
    * @returns количество задетых записей
    */

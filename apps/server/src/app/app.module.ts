@@ -2,7 +2,7 @@ import { Module } from '@nestjs/common';
 import { databaseConfig } from '../database.config';
 import { TrackEntity, TrackModule } from '../modules/track';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { FileEntity, S3MinioModule, SettingsEntity, SettingsModule } from '@backend/common';
+import { FileEntity,  SettingsEntity, SettingsModule } from '@backend/common';
 import { ArtistEntity, ArtistModule } from '../modules/artist';
 import { ConfigModule } from '@nestjs/config';
 import { minioConfig } from '../minio.config';
@@ -37,7 +37,6 @@ const database = [
     TrackModule,
     ArtistModule,
     SettingsModule,
-    S3MinioModule,
     ...configuration,
     ...database,
   ],

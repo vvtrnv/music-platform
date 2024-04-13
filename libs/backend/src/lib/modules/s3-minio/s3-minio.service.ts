@@ -1,35 +1,44 @@
-import { PutObjectCommand, PutObjectCommandOutput, S3Client } from '@aws-sdk/client-s3';
 import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { IS3MinioConfig, UploadParams } from './interfaces';
+import { Client } from 'minio';
 
 @Injectable()
 export class S3MinioService {
   protected readonly logger = new Logger(S3MinioService.name);
-  protected client: S3Client;
+  protected minioClient: Client;
 
   constructor(
     protected readonly configService: ConfigService,
   ) {
     const minioConfig = this.configService.get<IS3MinioConfig>('minio');
     if (!minioConfig?.accessKeyId) {
-      this.logger.error(`S3 AccessKeyId not found. Config: ${JSON.stringify(configService)}`);
-      throw new Error('S3 access key ID not found. Minio not configurated');
+      this.logger.error(`S3 AccessKey not found. Config: ${JSON.stringify(configService)}`);
+      throw new Error('S3 access key not found. Minio not configurated');
     }
-
-    this.client = new S3Client({
-      endpoint: minioConfig.endpoint,
-      credentials: {
-        accessKeyId: minioConfig.accessKeyId,
-        secretAccessKey: minioConfig.secretAccessKey,
-      },
-      region: minioConfig.region,
-      forcePathStyle: true,
+    this.minioClient = new Client({
+      endPoint: minioConfig.endpoint,
+      port: minioConfig.port,
+      accessKey: minioConfig.accessKeyId,
+      secretKey: minioConfig.secretAccessKey,
+      useSSL: false,
     });
   }
 
-  public async upload(params: UploadParams): Promise<PutObjectCommandOutput> {
-    return this.client.send(new PutObjectCommand(params));
+  public async upload(params: UploadParams) {
+    const { bucket, key, body } = params;
+    const bucketExists = await this.minioClient.bucketExists(bucket);
+    if (!bucketExists) {
+      this.logger.log(`Upload. Bucket '${bucket}' will be created`);
+      await this.minioClient.makeBucket(bucket);
+    }
+    await this.minioClient.putObject(bucket, key, body, body.length, (err: Error) => {
+      if (err) {
+        this.logger.error(`Upload. File ${key} in bucket '${bucket}' not uploaded. ${err}`);
+        throw new Error('Error upload file');
+      }
+      this.logger.log(`Upload. File ${key} in bucket '${bucket}' uploaded. ${err}`);
+    });
   }
 
 }
