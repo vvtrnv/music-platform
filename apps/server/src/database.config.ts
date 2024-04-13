@@ -1,4 +1,4 @@
-export const databaseOptions = {
+export const databaseConfig = {
   host: process.env.POSTGRES_HOST,
   port: +process.env.POSTGRES_PORT ?? 5432,
   username: process.env.POSTGRES_USERNAME,
