@@ -1,7 +1,8 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { IS3MinioConfig, UploadParams } from './interfaces';
+import { IS3MinioConfig, S3GetParams, S3UploadParams } from './interfaces';
 import { Client } from 'minio';
+import internal from 'stream';
 
 @Injectable()
 export class S3MinioService {
@@ -25,7 +26,7 @@ export class S3MinioService {
     });
   }
 
-  public async upload(params: UploadParams) {
+  public async upload(params: S3UploadParams) {
     const { bucket, key, body } = params;
     const bucketExists = await this.minioClient.bucketExists(bucket);
     if (!bucketExists) {
@@ -41,4 +42,8 @@ export class S3MinioService {
     });
   }
 
+  public async getStream(params: S3GetParams): Promise<internal.Readable> {
+    const { bucket, key } = params;
+    return this.minioClient.getObject(bucket, key);
+  }
 }

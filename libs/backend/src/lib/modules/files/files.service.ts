@@ -33,37 +33,8 @@ export class FilesService {
       bucket: fileType,
       body: file.buffer,
     });
-    return (await this.createRecord({ filename, path: '' })).id;
+    return (await this.createRecord({ filename, bucket: fileType })).id;
   }
-
-  /**
-   * Удаление файла/файлов
-   * @param whereOpt 
-   * @returns количество задетых записей
-   */
-  protected async remove(whereOpt: IFile): Promise<DeleteResult> {
-    try {
-      const fileRecords = await this.getFileRecords(whereOpt);
-      let deletedFilesCounter = 0;
-
-      this.logger.log(`remove. Найдено ${fileRecords.length} записей по запросу ${whereOpt}`)
-      fileRecords.forEach(async file => await fs.unlink(path.resolve(file?.path ?? '', file?.filename ?? ''), err => {
-        if (err && err.code == 'ENOENT') {
-          this.logger.error(`Файл ${file.path}/${file.filename} не найден`);
-        } else if (err) {
-          this.logger.error(`При удалении файла ${file.path}/${file.filename} ошибка ${err.message}`);
-        } else {
-          this.logger.log(`Файл ${file.path}/${file.filename} успешно удалён`);
-          deletedFilesCounter += 1;
-        }
-      }));
-      this.logger.log(`remove. Удалено ${deletedFilesCounter} файлов из ${fileRecords.length} найденых записей`)
-      return this.removeRecords(whereOpt);
-    } catch (error: any) {
-      throw new HttpException(error.message, HttpStatus.INTERNAL_SERVER_ERROR)
-    }
-  }
-
 
   /**
    * Создание записи о файле

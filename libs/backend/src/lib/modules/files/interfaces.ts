@@ -6,5 +6,5 @@ export enum FileTypes {
 export interface IFile {
   id?: string;
   filename?: string;
-  path?: string;
+  bucket?: string;
 }
