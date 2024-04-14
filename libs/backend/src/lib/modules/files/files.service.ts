@@ -1,12 +1,11 @@
-import { HttpException, HttpStatus, Injectable, Logger } from '@nestjs/common';
-import * as path from 'path';
-import * as fs from 'fs';
-import { FileTypes, IFile } from './interfaces';
+import { Injectable, Logger, NotFoundException } from '@nestjs/common';
+import { FileTypes } from './interfaces';
 import * as uuid from 'uuid';
 import { FileEntity } from './entities/file.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { DeleteResult, Repository } from 'typeorm';
 import { S3MinioService } from '../s3-minio';
+import internal from 'stream';
 
 @Injectable()
 export class FilesService {
@@ -33,7 +32,18 @@ export class FilesService {
       bucket: fileType,
       body: file.buffer,
     });
-    return (await this.createRecord({ filename, bucket: fileType })).id;
+    return (await this.createRecord({ filename, bucket: fileType } as FileEntity)).id;
+  }
+
+  public async getFromMinio(id: string): Promise<internal.Readable> {
+    const file = await this.getFileRecord({ id } as FileEntity);
+    if (!file) {
+      throw new NotFoundException('File not found');
+    }
+    return this.s3minioService.getStream({
+      bucket: file.bucket,
+      key: file.filename
+    })
   }
 
   /**
@@ -41,7 +51,7 @@ export class FilesService {
    * @param file - данные для записи
    * @returns FileEntity
    */
-  protected async createRecord(file: IFile): Promise<FileEntity> {
+  protected async createRecord(file: FileEntity): Promise<FileEntity> {
     return this.filesRepo.save({ ...file });
   }
   /**
@@ -49,7 +59,7 @@ export class FilesService {
    * @param file поля для поиска
    * @returns количество затронутых записей
    */
-  protected async removeRecords(file: IFile): Promise<DeleteResult> {
+  protected async removeRecords(file: FileEntity): Promise<DeleteResult> {
     return this.filesRepo.delete({ ...file });
   }
   /**
@@ -57,7 +67,7 @@ export class FilesService {
    * @param file поля для поиска
    * @returns Массив
    */
-  protected async getFileRecords(file: IFile): Promise<FileEntity[]>{
-    return this.filesRepo.find({ where: { ...file } })
+  protected async getFileRecord(file: FileEntity): Promise<FileEntity | null>{
+    return this.filesRepo.findOne({ where: { ...file } })
   }
 }
