@@ -1,11 +1,11 @@
-import { HttpException, HttpStatus, Injectable, Logger } from '@nestjs/common';
-import * as path from 'path';
-import * as fs from 'fs';
-import { FileTypes, IFile } from './interfaces';
+import { Injectable, Logger, NotFoundException } from '@nestjs/common';
+import { FileTypes } from './interfaces';
 import * as uuid from 'uuid';
 import { FileEntity } from './entities/file.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { DeleteResult, Repository } from 'typeorm';
+import { S3MinioService } from '../s3-minio';
+import internal from 'stream';
 
 @Injectable()
 export class FilesService {
@@ -13,70 +13,45 @@ export class FilesService {
   constructor(
     @InjectRepository(FileEntity)
     private filesRepo: Repository<FileEntity>,
+    private s3minioService: S3MinioService,
   ) {}
 
   /**
-   * Сохраняем файл на диск
+   * Сохраняем файл
    * @param file 
    * @param fileType 
    * @returns 
    */
   public async save(file: any, fileType: FileTypes): Promise<string | undefined> {
-    try {
-      console.log(file);
-      const fileExtension = file.originalname.split('.').pop();
-      const filepath = path.resolve(
-        process.env['FILES_DIR'] ?? `${__dirname}/../../../files`, fileType);
-      const filename = `${uuid.v4()}.${fileExtension}`;
+    const fileId = uuid.v4();
+    const fileExtension = file.originalname.split('.').pop();
+    const filename = `${fileId}.${fileExtension}`;
 
-      if (!fs.existsSync(filepath)) {
-        this.logger.log(`Создан каталог '${filepath}'`);
-        fs.mkdirSync(filepath, { recursive: true });
-      }
-      this.logger.log(`Сохранение файла ${filename}`);
-      fs.writeFileSync(path.resolve(filepath, filename), file.buffer);
-
-      return (await this.createRecord({ filename, path: filepath })).id;
-    } catch (error: any) {
-      throw new HttpException(error.message, HttpStatus.INTERNAL_SERVER_ERROR)
-    }
+    await this.s3minioService.upload({
+      key: fileId,
+      bucket: fileType,
+      body: file.buffer,
+    });
+    return (await this.createRecord({ filename, bucket: fileType } as FileEntity)).id;
   }
 
-  /**
-   * Удаление файла/файлов с диска
-   * @param whereOpt 
-   * @returns количество задетых записей
-   */
-  protected async remove(whereOpt: IFile): Promise<DeleteResult> {
-    try {
-      const fileRecords = await this.getFileRecords(whereOpt);
-      let deletedFilesCounter = 0;
-
-      this.logger.log(`remove. Найдено ${fileRecords.length} записей по запросу ${whereOpt}`)
-      fileRecords.forEach(async file => await fs.unlink(path.resolve(file?.path ?? '', file?.filename ?? ''), err => {
-        if (err && err.code == 'ENOENT') {
-          this.logger.error(`Файл ${file.path}/${file.filename} не найден`);
-        } else if (err) {
-          this.logger.error(`При удалении файла ${file.path}/${file.filename} ошибка ${err.message}`);
-        } else {
-          this.logger.log(`Файл ${file.path}/${file.filename} успешно удалён`);
-          deletedFilesCounter += 1;
-        }
-      }));
-      this.logger.log(`remove. Удалено ${deletedFilesCounter} файлов из ${fileRecords.length} найденых записей`)
-      return this.removeRecords(whereOpt);
-    } catch (error: any) {
-      throw new HttpException(error.message, HttpStatus.INTERNAL_SERVER_ERROR)
+  public async getFromMinio(id: string): Promise<internal.Readable> {
+    const file = await this.getFileRecord({ id } as FileEntity);
+    if (!file) {
+      throw new NotFoundException('File not found');
     }
+    return this.s3minioService.getStream({
+      bucket: file.bucket,
+      key: file.filename
+    })
   }
-
 
   /**
    * Создание записи о файле
    * @param file - данные для записи
    * @returns FileEntity
    */
-  protected async createRecord(file: IFile): Promise<FileEntity> {
+  protected async createRecord(file: FileEntity): Promise<FileEntity> {
     return this.filesRepo.save({ ...file });
   }
   /**
@@ -84,7 +59,7 @@ export class FilesService {
    * @param file поля для поиска
    * @returns количество затронутых записей
    */
-  protected async removeRecords(file: IFile): Promise<DeleteResult> {
+  protected async removeRecords(file: FileEntity): Promise<DeleteResult> {
     return this.filesRepo.delete({ ...file });
   }
   /**
@@ -92,7 +67,7 @@ export class FilesService {
    * @param file поля для поиска
    * @returns Массив
    */
-  protected async getFileRecords(file: IFile): Promise<FileEntity[]>{
-    return this.filesRepo.find({ where: { ...file } })
+  protected async getFileRecord(file: FileEntity): Promise<FileEntity | null>{
+    return this.filesRepo.findOne({ where: { ...file } })
   }
 }

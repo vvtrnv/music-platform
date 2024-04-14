@@ -1,11 +1,15 @@
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, CreateDateColumn, Entity, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
 
 @Entity({ name: 'Files' })
 export class FileEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;
   @Column()
-  filename: string;
+  bucket: string;
   @Column()
-  path: string;
+  filename: string;
+  @CreateDateColumn()
+  createdAt?: Date;
+  @UpdateDateColumn()
+  updateAt?: Date;
 }

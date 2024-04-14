@@ -42,3 +42,5 @@ Thumbs.db
 
 test
 apps/server/files
+
+.env
